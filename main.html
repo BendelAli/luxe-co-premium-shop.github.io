@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Luxe & Co — Premium Shop</title>
+<style>
+  :root{
+    --bg:#0b0d12;
+    --card:#151924;
+    --gold:#d4af37;
+    --txt:#eaeaf0;
+    --accent:#c9a227;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--txt);
+    overflow-x:hidden;
+  }
+
+  /* ==================== PREMIUM ANIMATED BACKGROUND FOR LOGIN ==================== */
+  #loginPage{
+    position:fixed;
+    inset:0;
+    background:linear-gradient(135deg,#0b0d12,#1a1f2e);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+    transition:opacity 0.6s ease;
+    overflow:hidden;
+  }
+
+  /* Canvas for animated luxury particles + floating gold elements */
+  #loginCanvas{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    opacity:0.75;
+  }
+
+  /* Subtle moving gold glow overlay */
+  #loginPage::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:radial-gradient(circle at 30% 20%, rgba(212,175,55,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(212,175,55,0.10) 0%, transparent 60%);
+    animation:goldGlow 25s linear infinite;
+    z-index:2;
+    pointer-events:none;
+  }
+
+  @keyframes goldGlow{
+    0%   { transform: rotate(0deg) scale(1); }
+    100% { transform: rotate(360deg) scale(1.08); }
+  }
+
+  .login-card{
+    background:var(--card);
+    border:1px solid #222;
+    border-radius:16px;
+    width:100%;
+    max-width:380px;
+    padding:2.5rem 2rem;
+    text-align:center;
+    box-shadow:0 30px 70px rgba(0,0,0,0.7),
+               0 0 80px rgba(212,175,55,0.25);
+    position:relative;
+    z-index:10;
+    backdrop-filter:blur(12px);
+  }
+  .login-card h1{
+    color:var(--gold);
+    font-size:2.4rem;
+    margin:0 0 1.5rem;
+    letter-spacing:4px;
+    text-shadow:0 0 30px rgba(212,175,55,0.6);
+  }
+  .login-card input{
+    width:100%;
+    padding:14px;
+    margin:10px 0;
+    background:#0e1320;
+    border:1px solid #333;
+    border-radius:8px;
+    color:var(--txt);
+    font-size:1rem;
+    transition:border 0.3s;
+  }
+  .login-card input:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(212,175,55,0.2);
+    outline:none;
+  }
+  .login-card button{
+    width:100%;
+    padding:14px;
+    background:var(--gold);
+    color:#111;
+    border:none;
+    border-radius:8px;
+    font-weight:700;
+    font-size:1.1rem;
+    cursor:pointer;
+    margin-top:1rem;
+    transition:all 0.3s;
+    position:relative;
+    overflow:hidden;
+  }
+  .login-card button::after{
+    content:'';
+    position:absolute;
+    top:-50%;
+    left:-50%;
+    width:60%;
+    height:300%;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,0.4),transparent);
+    transform:rotate(30deg);
+    animation:shine 4s linear infinite;
+  }
+  @keyframes shine{
+    0%   { transform:translateX(-150%) rotate(30deg); }
+    100% { transform:translateX(300%) rotate(30deg); }
+  }
+  .login-card button:hover{
+    background:var(--accent);
+    transform:translateY(-3px) scale(1.02);
+    box-shadow:0 10px 25px rgba(212,175,55,0.4);
+  }
+  .login-card .demo{
+    margin-top:1.5rem;
+    font-size:0.85rem;
+    color:#777;
+    cursor:pointer;
+    transition:color 0.3s;
+  }
+  .login-card .demo:hover{color:var(--gold);}
+
+  /* Rest of the styles remain unchanged */
+  header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:1.2rem 2rem;
+    background:rgba(11,13,18,0.95);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid #222;
+    position:sticky;
+    top:0;
+    z-index:100;
+  }
+  h1{
+    font-size:1.65rem;
+    color:var(--gold);
+    margin:0;
+    letter-spacing:1px;
+  }
+  .cart-btn{
+    background:none;
+    border:1.5px solid var(--gold);
+    color:var(--gold);
+    padding:0.6rem 1.2rem;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    transition:all 0.3s;
+  }
+  .cart-btn:hover{
+    background:var(--gold);
+    color:#111;
+  }
+
+  .grid{
+    display:grid;
+    gap:1.8rem;
+    padding:2rem;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    max-width:1400px;
+    margin:0 auto;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid #222;
+    border-radius:14px;
+    overflow:hidden;
+    transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 20px 30px rgba(212,175,55,0.15);
+    border-color:var(--gold);
+  }
+  .thumb{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+    transition:transform 0.4s;
+  }
+  .card:hover .thumb{transform:scale(1.06);}
+  .card-body{
+    padding:1.2rem;
+    text-align:center;
+  }
+  .card h3{
+    margin:0 0 0.4rem;
+    font-size:1.15rem;
+  }
+  .price{
+    color:var(--gold);
+    font-weight:700;
+    font-size:1.25rem;
+    margin:0.3rem 0;
+  }
+  .add{
+    background:var(--gold);
+    color:#111;
+    border:none;
+    padding:0.7rem 1.4rem;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:700;
+    margin-top:0.8rem;
+    transition:all 0.3s;
+  }
+  .add:hover{
+    background:var(--accent);
+    transform:scale(1.03);
+  }
+
+  .modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.75);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:2000;
+    padding:1rem;
+  }
+  .sheet{
+    background:var(--card);
+    border:1px solid #333;
+    border-radius:14px;
+    max-width:560px;
+    width:100%;
+    padding:1.8rem;
+    max-height:92vh;
+    overflow:auto;
+  }
+  .close{
+    float:right;
+    background:none;
+    border:none;
+    color:var(--txt);
+    font-size:1.8rem;
+    cursor:pointer;
+    line-height:1;
+  }
+  .list{max-height:180px;overflow:auto;margin:1rem 0;border-top:1px solid #222;padding-top:0.8rem;}
+  .row{display:flex;justify-content:space-between;border-bottom:1px dashed #333;padding:0.5rem 0;font-size:0.97rem;}
+  label{font-size:0.85rem;display:block;margin:0.6rem 0 0.2rem;color:#aaa;}
+  input{
+    width:100%;
+    padding:0.75rem;
+    border-radius:8px;
+    border:1px solid #333;
+    background:#0e1320;
+    color:var(--txt);
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .actions{display:flex;justify-content:flex-end;gap:0.8rem;margin-top:1.2rem;}
+  .btn{
+    background:var(--gold);
+    color:#111;
+    border:none;
+    padding:0.7rem 1.6rem;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:700;
+  }
+  .muted{color:#888;font-size:0.9rem;}
+
+  #welcomeOverlay{
+    position:fixed;
+    inset:0;
+    background:rgba(11,13,18,0.96);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:3000;
+    flex-direction:column;
+  }
+  #threeContainer{
+    width:100%;
+    max-width:700px;
+    height:320px;
+  }
+  .welcome-text{
+    color:var(--gold);
+    font-size:3.2rem;
+    font-weight:700;
+    letter-spacing:6px;
+    margin-top:1rem;
+    opacity:0;
+    text-shadow:0 0 30px rgba(212,175,55,0.6);
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE WITH PREMIUM ANIMATED BACKGROUND -->
+<div id="loginPage">
+  <!-- Premium animated canvas background -->
+  <canvas id="loginCanvas"></canvas>
+
+  <div class="login-card">
+    <h1>LUXE & CO</h1>
+    <p style="margin:0.5rem 0 1.5rem;color:#888;">Exclusive Member Access</p>
+    
+    <input type="text" id="username" placeholder="Username (demo: luxe)" value="luxe">
+    <input type="password" id="password" placeholder="Password (demo: 123)" value="123">
+    
+    <button onclick="attemptLogin()">ENTER THE VAULT</button>
+    
+    <div class="demo" onclick="quickLogin()">Use demo credentials</div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header id="mainHeader" style="display:none;">
+  <h1>Luxe & Co Weekly Limited Sales</h1>
+  <button class="cart-btn" id="cartBtn">Cart: <span id="count">0</span></button>
+</header>
+
+<!-- PRODUCTS -->
+<section class="grid" id="products" style="display:none;"></section>
+
+<!-- Welcome 3D Screen -->
+<div id="welcomeOverlay">
+  <div id="threeContainer"></div>
+  <div class="welcome-text" id="welcomeMessage">WELCOME TO LUXE</div>
+</div>
+
+<!-- Cart Modal -->
+<div class="modal" id="cartModal">
+  <div class="sheet">
+    <button class="close" id="cartClose">×</button>
+    <h3>Your Cart</h3>
+    <div class="list" id="cartList"></div>
+    <div>Subtotal: $<span id="subtotal">0</span></div>
+    <div class="grid2">
+      <div><label>Coupon Code</label><input id="coupon" placeholder="LUXE20"></div>
+      <div style="display:flex;align-items:end"><button class="btn" id="applyCoupon" style="width:100%">Apply</button></div>
+    </div>
+    <div style="margin-top:1rem;font-size:1.3rem;font-weight:700;">Total: $<span id="total">0</span></div>
+
+    <h3 style="margin-top:1.8rem">Shipping Details</h3>
+    <label>Full Name</label><input id="s_name">
+    <label>Address</label><input id="s_addr">
+    <div class="grid2">
+      <div><label>City</label><input id="s_city"></div>
+      <div><label>Phone</label><input id="s_phone"></div>
+    </div>
+
+    <h3 style="margin-top:1.8rem">Payment (Mock Checkout)</h3>
+    <label>Cardholder Name</label><input id="p_name">
+    <label>Card Number</label><input id="p_num" placeholder="4242 4242 4242 4242">
+    <div class="grid2">
+      <div><label>Expiry (MM/YY)</label><input id="p_exp" placeholder="12/29"></div>
+      <div><label>CVV</label><input id="p_cvv" maxlength="4"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="payBtn" style="background:#222;color:#ddd;">Pay Securely</button>
+    </div>
+    <div class="muted" id="msg" style="margin-top:1rem;text-align:center;"></div>
+  </div>
+</div>
+
+<!-- Receipt Modal -->
+<div class="modal" id="receiptModal">
+  <div class="sheet">
+    <h3>Thank You — Receipt</h3>
+    <div class="list" id="receiptList"></div>
+    <div style="font-size:1.4rem;font-weight:700;margin:1rem 0;">Paid: $<span id="paid">0</span></div>
+    <div class="muted">Your order has been placed. Expect delivery in 3–5 business days.</div>
+    <div class="actions"><button class="btn" id="doneBtn">Continue Shopping</button></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script>
+// ==================== PREMIUM ANIMATED BACKGROUND (Particles + Gold Orbs) ====================
+function createLoginBackground() {
+  const canvas = document.getElementById('loginCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  let w, h;
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Particles
+  const particles = [];
+  class Particle {
+    constructor() {
+      this.x = Math.random() * w;
+      this.y = Math.random() * h;
+      this.size = Math.random() * 3.5 + 1.2;
+      this.speedX = Math.random() * 0.6 - 0.3;
+      this.speedY = Math.random() * 0.6 - 0.3;
+      this.opacity = Math.random() * 0.6 + 0.3;
+      this.hue = Math.random() > 0.7 ? 48 : 210; // gold or deep blue
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      if (this.x < 0 || this.x > w) this.speedX *= -1;
+      if (this.y < 0 || this.y > h) this.speedY *= -1;
+      this.opacity = 0.4 + Math.sin(Date.now() / 800) * 0.3;
+    }
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = this.opacity;
+      ctx.fillStyle = this.hue === 48 ? '#d4af37' : '#a5b4fc';
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = this.hue === 48 ? '#d4af37' : '#6366f1';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // Floating luxury gold orbs
+  const orbs = [];
+  class Orb {
+    constructor() {
+      this.x = Math.random() * w;
+      this.y = Math.random() * h * 0.6;
+      this.radius = Math.random() * 45 + 25;
+      this.speed = Math.random() * 0.4 + 0.2;
+      this.angle = Math.random() * Math.PI * 2;
+      this.opacity = Math.random() * 0.15 + 0.08;
+    }
+    update() {
+      this.angle += 0.008;
+      this.y -= this.speed;
+      if (this.y < -100) this.y = h + 100;
+    }
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = this.opacity;
+      const grad = ctx.createRadialGradient(this.x, this.y, 5, this.x+20, this.y-20, this.radius*1.6);
+      grad.addColorStop(0, '#f5e8a3');
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.shadowBlur = 60;
+      ctx.shadowColor = '#d4af37';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  for (let i = 0; i < 85; i++) particles.push(new Particle());
+  for (let i = 0; i < 7; i++) orbs.push(new Orb());
+
+  function animateBackground() {
+    ctx.clearRect(0, 0, w, h);
+    
+    // Slow moving background grid lines (luxury feel)
+    ctx.strokeStyle = 'rgba(212,175,55,0.06)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < w; x += 80) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x + Math.sin(Date.now()/2000) * 30, h);
+      ctx.stroke();
+    }
+
+    particles.forEach(p => { p.update(); p.draw(); });
+    orbs.forEach(o => { o.update(); o.draw(); });
+
+    requestAnimationFrame(animateBackground);
+  }
+  animateBackground();
+}
+
+// ==================== 10 PREMIUM ITEMS (unchanged) ====================
+const items = [
+  {name:"Matte Black Ocean Watch",price:1290,img:"Matte Black Ocean Watch.jfif",text:"Ceramic • Swiss movement"},
+  {name:"Heritage Full-Grain Tote",price:1850,img:"Heritage Full-Grain Tote.jfif",text:"Italian leather • Brownish hardware"},
+  {name:"Hand-Rolled Silk Scarf",price:420,img:"Hand-Rolled Silk Scarf.jfif",text:"100% Mulberry silk"},
+  {name:"Brushed Titanium Signet Ring",price:680,img:"Brushed Titanium Signet Ring.webp",text:"Hypoallergenic • Lifetime guarantee"},
+  {name:"18K Gold Cuban Chain 22\"",price:2450,img:"18K Gold Cuban Chain 22.jfif",text:"Solid gold • 8mm width"},
+  {name:"Italian Cashmere Crewneck",price:890,img:"Italian Cashmere Crewneck.jfif",text:"14-gauge • 7 colors"},
+  {name:"Tassel Leather Loafers",price:720,img:"Tassel Leather Loafers.jfif",text:"Hand-finished calfskin"},
+  {name:"Aviator Gold Sunglasses",price:520,img:"Aviator Gold Sunglasses.jpg",text:"UV400 • Sapphire lenses"},
+  {name:"Freshwater Pearl Halo Studs",price:390,img:"Freshwater Pearl Halo Studs.webp",text:"18K gold plated"},
+  {name:"Embossed Leather Cardholder",price:280,img:"Luxury Wallet.webp",text:"RFID protected"}
+];
+
+let cart = [];
+let discount = 0;
+let currentUser = null;
+
+const grid = document.getElementById('products');
+const loginPage = document.getElementById('loginPage');
+const mainHeader = document.getElementById('mainHeader');
+const welcomeOverlay = document.getElementById('welcomeOverlay');
+
+function renderProducts() {
+  grid.innerHTML = '';
+  items.forEach(product => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <img class="thumb" src="${product.img}" alt="${product.name}">
+      <div class="card-body">
+        <h3>${product.name}</h3>
+        <div class="price">$${product.price}</div>
+        <div style="font-size:0.85rem;color:#888;margin:0.3rem 0 1rem;">${product.text}</div>
+        <button class="add">Add to Cart</button>
+      </div>
+    `;
+    card.querySelector('.add').addEventListener('click', () => {
+      cart.push(product);
+      document.getElementById('count').textContent = cart.length;
+      showToast(`${product.name} added`);
+    });
+    grid.appendChild(card);
+  });
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#d4af37;color:#111;padding:12px 24px;border-radius:999px;font-weight:700;box-shadow:0 10px 20px rgba(0,0,0,0.4);z-index:9999;`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2200);
+}
+
+function attemptLogin() {
+  const user = document.getElementById('username').value.trim();
+  const pass = document.getElementById('password').value.trim();
+  
+  if ((user === 'luxe' && pass === '123') || (user && pass)) {
+    currentUser = user || 'Guest';
+    loginPage.style.opacity = '0';
+    setTimeout(() => {
+      loginPage.style.display = 'none';
+      mainHeader.style.display = 'flex';
+      grid.style.display = 'grid';
+      renderProducts();
+      showWelcomeAnimation();
+    }, 600);
+  } else {
+    alert("Demo login: username 'luxe' / password '123'");
+  }
+}
+
+function quickLogin() {
+  document.getElementById('username').value = 'luxe';
+  document.getElementById('password').value = '123';
+  attemptLogin();
+}
+
+// 3D Welcome Animation (unchanged)
+function showWelcomeAnimation() {
+  welcomeOverlay.style.display = 'flex';
+  const container = document.getElementById('threeContainer');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  container.appendChild(renderer.domElement);
+
+  const material = new THREE.MeshPhongMaterial({
+    color: 0xd4af37,
+    shininess: 120,
+    specular: 0xffffff,
+    emissive: 0x331100,
+    emissiveIntensity: 0.2
+  });
+
+  const letters = [];
+  const letterPositions = [-2.8, -1.4, 0, 1.4, 2.8];
+  
+  letterPositions.forEach((x, i) => {
+    const geo = new THREE.BoxGeometry(0.8, 1.6, 0.6);
+    const mesh = new THREE.Mesh(geo, material);
+    mesh.position.set(x, 0, 0);
+    mesh.rotation.x = Math.random() * 0.4 - 0.2;
+    scene.add(mesh);
+    letters.push(mesh);
+  });
+
+  const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+  scene.add(ambient);
+  const point = new THREE.PointLight(0xffdd88, 2.5, 100);
+  point.position.set(5, 10, 12);
+  scene.add(point);
+  const point2 = new THREE.PointLight(0x88aaff, 1.8, 100);
+  point2.position.set(-8, -5, 10);
+  scene.add(point2);
+
+  camera.position.z = 8;
+
+  let time = 0;
+  const animate = () => {
+    requestAnimationFrame(animate);
+    time += 0.018;
+    letters.forEach((letter, i) => {
+      letter.rotation.y = Math.sin(time * 1.2 + i) * 0.6;
+      letter.position.y = Math.sin(time * 2 + i * 1.3) * 0.35;
+    });
+    renderer.render(scene, camera);
+  };
+  animate();
+
+  setTimeout(() => {
+    document.getElementById('welcomeMessage').style.transition = 'opacity 1.8s';
+    document.getElementById('welcomeMessage').style.opacity = '1';
+  }, 800);
+
+  setTimeout(() => {
+    welcomeOverlay.style.transition = 'opacity 1.2s ease';
+    welcomeOverlay.style.opacity = '0';
+    setTimeout(() => { welcomeOverlay.style.display = 'none'; welcomeOverlay.style.opacity = '1'; }, 1300);
+  }, 4600);
+}
+
+// Cart & Checkout (unchanged)
+const openModal = m => m.style.display = 'flex';
+const closeModal = m => m.style.display = 'none';
+
+document.getElementById('cartBtn').onclick = () => {
+  const list = document.getElementById('cartList');
+  list.innerHTML = '';
+  let sum = 0;
+  cart.forEach(item => {
+    sum += item.price;
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `${item.name} <span>$${item.price}</span>`;
+    list.appendChild(row);
+  });
+  document.getElementById('subtotal').textContent = sum;
+  document.getElementById('total').textContent = sum - discount;
+  document.getElementById('msg').textContent = '';
+  openModal(document.getElementById('cartModal'));
+};
+
+document.getElementById('cartClose').onclick = () => closeModal(document.getElementById('cartModal'));
+document.getElementById('cartModal').onclick = e => {
+  if (e.target.id === 'cartModal') closeModal(document.getElementById('cartModal'));
+};
+
+document.getElementById('applyCoupon').onclick = () => {
+  const code = document.getElementById('coupon').value.trim().toUpperCase();
+  const sub = cart.reduce((a,b) => a + b.price, 0);
+  if (code === 'LUXE20') {
+    discount = Math.round(sub * 0.2);
+    document.getElementById('total').textContent = sub - discount;
+    document.getElementById('msg').innerHTML = '✅ <strong>LUXE20</strong> applied — 20% off';
+  } else {
+    document.getElementById('msg').textContent = 'Invalid code';
+  }
+};
+
+document.getElementById('payBtn').onclick = () => {
+  const fields = ['s_name','s_addr','s_city','s_phone','p_name','p_num','p_exp','p_cvv'];
+  const empty = fields.some(id => !document.getElementById(id).value.trim());
+  if (!cart.length) { document.getElementById('msg').textContent = 'Your cart is empty'; return; }
+  if (empty) { document.getElementById('msg').textContent = 'Please complete all fields'; return; }
+
+  document.getElementById('msg').innerHTML = '🔄 Processing secure payment...';
+  document.getElementById('payBtn').disabled = true;
+
+  setTimeout(() => {
+    const subtotal = cart.reduce((a,b) => a + b.price, 0);
+    const finalTotal = subtotal - discount;
+    const rList = document.getElementById('receiptList');
+    rList.innerHTML = '';
+    cart.forEach(item => {
+      const r = document.createElement('div');
+      r.className = 'row';
+      r.innerHTML = `${item.name} <span>$${item.price}</span>`;
+      rList.appendChild(r);
+    });
+    if (discount) {
+      const discRow = document.createElement('div');
+      discRow.className = 'row';
+      discRow.innerHTML = `LUXE20 Discount <span>-$${discount}</span>`;
+      rList.appendChild(discRow);
+    }
+    document.getElementById('paid').textContent = finalTotal;
+    closeModal(document.getElementById('cartModal'));
+    openModal(document.getElementById('receiptModal'));
+    cart = []; discount = 0;
+    document.getElementById('count').textContent = '0';
+    document.getElementById('payBtn').disabled = false;
+    document.getElementById('coupon').value = '';
+  }, 1450);
+};
+
+document.getElementById('doneBtn').onclick = () => closeModal(document.getElementById('receiptModal'));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const openModals = document.querySelectorAll('.modal[style*="flex"]');
+    if (openModals.length) closeModal(openModals[openModals.length-1]);
+  }
+});
+
+// Initialize premium login background
+window.onload = () => {
+  createLoginBackground();
+};
+</script>
+</body>
+</html>
